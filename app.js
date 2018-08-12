@@ -111,6 +111,7 @@ function getUsername(senderId) {
         };
 
         sendTextMessage(senderId, "Hola " + firstName + "!");
+        scriptedDialog("INIT", senderId);
       }
       else {
         console.error("Failed calling GET userId API", response.statusCode, response.statusMessage, body.error);
@@ -121,11 +122,11 @@ function getUsername(senderId) {
   else if (currentUser) {
     console.log('current user not NULL');
     sendTextMessage(senderId, "Hola " + currentUser.firstName + "!");
-    scriptedDialog("INIT");
+    scriptedDialog("INIT", senderId);
   }
 }
 
-const scriptedDialog = (text) => {
+const scriptedDialog = (text, senderId) => {
   var msg = "Hola!";
   if (currentUser) {
 
@@ -382,7 +383,7 @@ function handleMessage(currentUser, senderID, message, isEcho, messageId, appId,
       getUsername(senderID);
     }
     else {
-      scriptedDialog(messageText);
+      scriptedDialog(messageText, senderId);
     }
   }
   else if (messageAttachments) {
