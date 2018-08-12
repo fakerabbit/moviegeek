@@ -199,7 +199,7 @@ const scriptedDialog = (text, senderId) => {
         scriptValue = scriptInfo.askGame;
         if (text) {
           const url = encodeURI(text);
-          request('https://api.themoviedb.org/3/search/movie?api_key=' + THEMOVIE_KEY + '&language=en-US&include_adult=false&query=' + url, function (error, response, body) {
+          request('https://api.themoviedb.org/3/search/movie?api_key=' + THEMOVIE_KEY + '&language=es&include_adult=false&query=' + url, function (error, response, body) {
             if (!error && response.statusCode == 200) {
               var parsed = JSON.parse(body);
               var results = parsed.results;
