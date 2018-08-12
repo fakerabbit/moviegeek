@@ -132,7 +132,7 @@ const scriptedDialog = (text, senderId) => {
 
     if (!movie) {
       if (scriptValue == scriptInfo.askNone) {
-        msg = "Dime " + currentUser + ", cuál es actualmente tu película favorita?";
+        msg = "Dime " + currentUser.firstName + ", cuál es actualmente tu película favorita?";
         scriptValue = scriptInfo.askMovie;
         sendTextMessage(senderId, msg);
       }
@@ -383,7 +383,7 @@ function handleMessage(currentUser, senderID, message, isEcho, messageId, appId,
       getUsername(senderID);
     }
     else {
-      scriptedDialog(messageText, senderId);
+      scriptedDialog(messageText, senderID);
     }
   }
   else if (messageAttachments) {
