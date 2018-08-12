@@ -118,7 +118,6 @@ function getUsername(senderId) {
           score: 0
         };
 
-        sendTextMessage(senderId, "Hola " + firstName + "!");
         scriptedDialog("INIT", senderId);
       }
       else {
@@ -129,7 +128,6 @@ function getUsername(senderId) {
   }
   else if (currentUser) {
     console.log('current user not NULL');
-    sendTextMessage(senderId, "Hola " + currentUser.firstName + "!");
     scriptedDialog("INIT", senderId);
   }
 }
@@ -222,10 +220,10 @@ const scriptedDialog = (text, senderId) => {
                 currentMovie = null;
                 console.log('no movie or overview...');
                 msg = "No conozco esa película. Debe ser mala 😅"
+                getMeme(senderId, "nervous smile scared");
               }
             }
             sendTextMessage(senderId, msg);
-            getMeme(senderId, "cocky");
           });
         }
         else sendTextMessage(senderId, msg);
