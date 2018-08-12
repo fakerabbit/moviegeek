@@ -8,7 +8,8 @@ const
   express = require('express'),
   apiai = require('apiai'),
   request = require('request'),
-  uuid = require('uuid');
+  uuid = require('uuid'),
+  path = require("path");
 
 var app = express();
 app.set('port', process.env.PORT || 5000);
