@@ -54,6 +54,14 @@ if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL)) {
 
 var bot = apiai(AI_API_TOKEN);
 
+app.get('/', function(req, res) {
+  res.send('MovieGeek is in da house 🤖🎬');
+});
+
+app.get('/privacy',function(req,res){
+  res.sendFile(path.join(__dirname+'/privacy.html'));
+});
+
 /*
  * Use your own validation token. Check that the token used in the Webhook
  * setup is the same token used here.
