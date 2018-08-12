@@ -11,6 +11,7 @@ const
   uuid = require('uuid'),
   path = require("path");
 
+var currentUser = null;
 var app = express();
 app.set('port', process.env.PORT || 5000);
 app.use(bodyParser.json({ verify: verifyRequestSignature }));
@@ -284,7 +285,6 @@ function receivedMessage(event) {
   var messageId = message.mid;
   var appId = message.app_id;
   var metadata = message.metadata;
-  var currentUser = null;
   handleMessage(currentUser, senderID, message, isEcho, messageId, appId, metadata);
 }
 
