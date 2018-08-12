@@ -12,6 +12,20 @@ const
   path = require("path");
 
 var currentUser = null;
+var scriptInfo = {
+  askNone: 0,
+  askName: 1,
+  askVerify: 2,
+  askCheck: 3,
+  askCountry: 4,
+  askMovie: 5,
+  askPlay: 6,
+  askGame: 7,
+  askWait: 8,
+  askDevsu: 9
+};
+var movie = null;
+var scriptValue = scriptInfo.askNone;
 var app = express();
 app.set('port', process.env.PORT || 5000);
 app.use(bodyParser.json({ verify: verifyRequestSignature }));
@@ -107,8 +121,56 @@ function getUsername(senderId) {
   else if (currentUser) {
     console.log('current user not NULL');
     sendTextMessage(senderId, "Hola " + currentUser.firstName + "!");
+    scriptedDialog("INIT");
   }
 }
+
+const scriptedDialog = (text) => {
+  var msg = "Hola!";
+  if (currentUser) {
+
+    if (!movie) {
+      if (scriptValue == scriptInfo.askNone) {
+        msg = "Dime " + currentUser + ", cuál es actualmente tu película favorita?";
+        scriptValue = scriptInfo.askMovie;
+        sendTextMessage(senderId, msg);
+      }
+      else {
+        scriptValue = scriptInfo.askGame;
+        if (text) {
+          const url = encodeURI(text);
+          request('https://api.themoviedb.org/3/search/movie?api_key=2a59e9fa19f61ebab507df9adddbc110&language=en-US&include_adult=false&query=' + url, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+              var parsed = JSON.parse(body);
+              var results = parsed.results;
+              var movie = results.length > 0 ? results[0] : null;
+              if (movie && movie.overview) {
+                console.log('movie: ', movie.title);
+                movie = movie.title;
+                sendClient("I think I've seen it...", currentUser);
+                sendTextMessage(senderId, "Me parece que conozco esa película 🤔");
+                if (movie.poster_path) {
+                  sendImageMessage(senderId, "https://image.tmdb.org/t/p/w500" + movie.poster_path);
+                }
+                sendTextMessage(senderId, movie.overview);
+                msg = "¿Es la película que tenías en mente? (Si/No)";
+              }
+              else {
+                movie = null;
+                console.log('no movie or overview...');
+                msg = "Haven't heard of that one. Must be a crappy movie.";
+                msg = "No conozco esa película. Debe ser mala 😅"
+              }
+            }
+            sendTextMessage(senderId, msg);
+            //randGiphy("cocky", currentUser);
+          });
+        }
+        else sendTextMessage(senderId, msg);
+      }
+    }
+  }
+};
 
 /*
  * Use your own validation token. Check that the token used in the Webhook
@@ -318,10 +380,10 @@ function handleMessage(currentUser, senderID, message, isEcho, messageId, appId,
       messageText.toLowerCase() == 'hey' ||
       messageText.toLowerCase() == 'hi') {
 
-        getUsername(senderID);
+      getUsername(senderID);
     }
     else {
-      sendTextMessage(senderID, messageText);
+      scriptedDialog(messageText);
     }
   }
   else if (messageAttachments) {
@@ -518,7 +580,7 @@ function receivedAccountLink(event) {
  * Send an image using the Send API.
  *
  */
-function sendImageMessage(recipientId) {
+function sendImageMessage(recipientId, url) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -527,7 +589,7 @@ function sendImageMessage(recipientId) {
       attachment: {
         type: "image",
         payload: {
-          url: SERVER_URL + "/assets/rift.png"
+          url: url
         }
       }
     }
