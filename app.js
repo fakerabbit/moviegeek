@@ -581,6 +581,7 @@ function receivedAccountLink(event) {
  *
  */
 function sendImageMessage(recipientId, url) {
+  console.log('sendImageMessage with url: ', url);
   var messageData = {
     recipient: {
       id: recipientId
