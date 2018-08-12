@@ -63,6 +63,10 @@ const AI_API_TOKEN = (process.env.APIAI_TOKEN) ?
   (process.env.APIAI_TOKEN) :
   config.get('aiToken');
 
+const GIPHY_KEY = (process.env.GIPHY_KEY) ?
+  (process.env.GIPHY_KEY) :
+  config.get('giphyKey');
+
 if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL)) {
   console.error("Missing config values");
   process.exit(1);
@@ -126,6 +130,59 @@ function getUsername(senderId) {
   }
 }
 
+function getMeme(senderID, parameter) {
+  if (senderID) {
+    console.log('getMeme: ', parameter);
+    const value = encodeURI(parameter);
+  request({
+    uri: 'https://api.giphy.com/v1/gifs/search?api_key=' + GIPHY_KEY + '&limit=50&rating=pg&q=' + value,
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var parsed = JSON.parse(body);
+      var i = Math.floor(Math.random() * 10);
+      var meme = parsed.data[i];
+      if (meme && meme.images && meme.images.fixed_width) {
+        var giphy = meme.images.fixed_width;
+        var giphy = meme.images.fixed_width;
+        request({
+              uri: 'https://graph.facebook.com/v2.6/me/messages',
+              qs: { access_token: PAGE_ACCESS_TOKEN },
+              method: 'POST',
+              json: {
+                recipient: {
+                  id: senderID
+                },
+                message: {
+                  attachment: {
+                    type: 'image',
+                    payload: {
+                      url: giphy.url
+                    }
+                  }
+                }
+              }
+
+            }, function (error, response, body) {
+              if (!error && response.statusCode == 200) {
+                var result = body.result;
+
+                if (result) {
+                  console.log(result);
+                } else {
+                  console.log(result);
+                }
+              } else {
+                console.error("Failed sending giphy", response.statusCode, response.statusMessage, body.error);
+              }
+            });
+      }
+    } else {
+      console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
+    }
+  });
+  }
+}
+
 const scriptedDialog = (text, senderId) => {
   var msg = "Hola!";
   if (currentUser) {
@@ -148,7 +205,6 @@ const scriptedDialog = (text, senderId) => {
               if (movie && movie.overview) {
                 console.log('movie: ', movie.title);
                 currentMovie = movie.title;
-                sendTextMessage(senderId, "Me parece que conozco esa película 🤔");
                 if (movie.poster_path) {
                   console.log('movie.poster_path: ', movie.poster_path);
                   sendImageMessage(senderId, "https://image.tmdb.org/t/p/w500" + movie.poster_path);
@@ -161,12 +217,11 @@ const scriptedDialog = (text, senderId) => {
               else {
                 currentMovie = null;
                 console.log('no movie or overview...');
-                msg = "Haven't heard of that one. Must be a crappy movie.";
                 msg = "No conozco esa película. Debe ser mala 😅"
               }
             }
             sendTextMessage(senderId, msg);
-            //randGiphy("cocky", currentUser);
+            getMeme(senderId, "cocky");
           });
         }
         else sendTextMessage(senderId, msg);
@@ -178,13 +233,16 @@ const scriptedDialog = (text, senderId) => {
         scriptValue = scriptInfo.askMovie;
         if (text == "Si" || text == "si") {
           sendTextMessage(senderId, "Genial! Alguna otra película que te guste?");
+          getMeme(senderId, "excited happy waiting");
         } else {
           sendTextMessage(senderId, "Ni modo! Alguna otra película que te guste?");
+          getMeme(senderId, "crying dissapointed angry");
         }
       }
       else {
         scriptValue = scriptInfo.askMovie;
         sendTextMessage(senderId, "Hola! Dame el hombre de alguna película interesante!");
+        getMeme(senderId, "hi hello waving");
       }
     }
   }
