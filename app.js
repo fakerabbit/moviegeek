@@ -150,9 +150,12 @@ const scriptedDialog = (text, senderId) => {
                 movie = movie.title;
                 sendTextMessage(senderId, "Me parece que conozco esa película 🤔");
                 if (movie.poster_path) {
+                  console.log('movie.poster_path: ', movie.poster_path);
                   sendImageMessage(senderId, "https://image.tmdb.org/t/p/w500" + movie.poster_path);
                 }
-                sendTextMessage(senderId, movie.overview);
+                if (movie.overview) {
+                  sendTextMessage(senderId, movie.overview);
+                }
                 msg = "¿Es la película que tenías en mente? (Si/No)";
               }
               else {
