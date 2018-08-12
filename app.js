@@ -67,6 +67,10 @@ const GIPHY_KEY = (process.env.GIPHY_KEY) ?
   (process.env.GIPHY_KEY) :
   config.get('giphyKey');
 
+const THEMOVIE_KEY = (process.env.THEMOVIE_KEY) ?
+  (process.env.THEMOVIE_KEY) :
+  config.get('theMovieKey');
+
 if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL)) {
   console.error("Missing config values");
   process.exit(1);
@@ -197,7 +201,7 @@ const scriptedDialog = (text, senderId) => {
         scriptValue = scriptInfo.askGame;
         if (text) {
           const url = encodeURI(text);
-          request('https://api.themoviedb.org/3/search/movie?api_key=2a59e9fa19f61ebab507df9adddbc110&language=en-US&include_adult=false&query=' + url, function (error, response, body) {
+          request('https://api.themoviedb.org/3/search/movie?api_key=' + THEMOVIE_KEY + '&language=en-US&include_adult=false&query=' + url, function (error, response, body) {
             if (!error && response.statusCode == 200) {
               var parsed = JSON.parse(body);
               var results = parsed.results;
