@@ -171,6 +171,21 @@ const scriptedDialog = (text, senderId) => {
         }
         else sendTextMessage(senderId, msg);
       }
+    } 
+    else {
+      currentMovie = null;
+      if (scriptValue == scriptInfo.askGame) {
+        scriptValue = scriptInfo.askMovie;
+        if (text == "Si" || text == "si") {
+          sendTextMessage(senderId, "Genial! Alguna otra película que te guste?");
+        } else {
+          sendTextMessage(senderId, "Ni modo! Alguna otra película que te guste?");
+        }
+      }
+      else {
+        scriptValue = scriptInfo.askMovie;
+        sendTextMessage(senderId, "Hola! Dame el hombre de alguna película interesante!");
+      }
     }
   }
 };
