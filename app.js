@@ -24,7 +24,7 @@ var scriptInfo = {
   askWait: 8,
   askDevsu: 9
 };
-var movie = null;
+var currentMovie = null;
 var scriptValue = scriptInfo.askNone;
 var app = express();
 app.set('port', process.env.PORT || 5000);
@@ -130,7 +130,7 @@ const scriptedDialog = (text, senderId) => {
   var msg = "Hola!";
   if (currentUser) {
 
-    if (!movie) {
+    if (!currentMovie) {
       if (scriptValue == scriptInfo.askNone) {
         msg = "Dime " + currentUser.firstName + ", cuál es actualmente tu película favorita?";
         scriptValue = scriptInfo.askMovie;
@@ -147,7 +147,7 @@ const scriptedDialog = (text, senderId) => {
               var movie = results.length > 0 ? results[0] : null;
               if (movie && movie.overview) {
                 console.log('movie: ', movie.title);
-                movie = movie.title;
+                currentMovie = movie.title;
                 sendTextMessage(senderId, "Me parece que conozco esa película 🤔");
                 if (movie.poster_path) {
                   console.log('movie.poster_path: ', movie.poster_path);
@@ -159,7 +159,7 @@ const scriptedDialog = (text, senderId) => {
                 msg = "¿Es la película que tenías en mente? (Si/No)";
               }
               else {
-                movie = null;
+                currentMovie = null;
                 console.log('no movie or overview...');
                 msg = "Haven't heard of that one. Must be a crappy movie.";
                 msg = "No conozco esa película. Debe ser mala 😅"
