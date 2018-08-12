@@ -147,7 +147,6 @@ const scriptedDialog = (text) => {
               if (movie && movie.overview) {
                 console.log('movie: ', movie.title);
                 movie = movie.title;
-                sendClient("I think I've seen it...", currentUser);
                 sendTextMessage(senderId, "Me parece que conozco esa película 🤔");
                 if (movie.poster_path) {
                   sendImageMessage(senderId, "https://image.tmdb.org/t/p/w500" + movie.poster_path);
