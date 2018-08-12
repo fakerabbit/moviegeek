@@ -63,6 +63,52 @@ app.get('/privacy',function(req,res){
   res.sendFile(path.join(__dirname+'/privacy.html'));
 });
 
+function getUsername(senderId) {
+  if (senderId && currentUser === null) {
+    console.log('senderId', senderId);
+
+    request({
+      uri: 'https://graph.facebook.com/v2.6/' + senderId + '?access_token=' + process.env.MESSENGER_PAGE_ACCESS_TOKEN
+    }, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        console.log('GOT USER...');
+        var jsonObject = JSON.parse(body);
+        var firstName = jsonObject.first_name;
+        var lastName = jsonObject.last_name;
+        var profilePic = jsonObject.profile_pic;
+        var locale = jsonObject.locale;
+        var timeZone = jsonObject.timezone;
+        var gender = jsonObject.gender;
+        var paymentEnabled = jsonObject.is_payment_enabled;
+
+        currentUser = {
+          userId: senderId,
+          firstName: firstName,
+          lastName: lastName,
+          profilePic: profilePic,
+          locale: locale,
+          timezone: timeZone,
+          gender: gender,
+          isPaymentEnabled: paymentEnabled,
+          gameType: null,
+          questions: null,
+          score: 0
+        };
+
+        sendTextMessage(senderId, "Hola " + firstName + "!");
+      }
+      else {
+        console.error("Failed calling GET userId API", response.statusCode, response.statusMessage, body.error);
+        currentUser = null;
+      }
+    });
+  }
+  else if (currentUser) {
+    console.log('current user not NULL');
+    sendTextMessage(senderId, "Hola " + currentUser.firstName + "!");
+  }
+}
+
 /*
  * Use your own validation token. Check that the token used in the Webhook
  * setup is the same token used here.
@@ -272,7 +318,7 @@ function handleMessage(currentUser, senderID, message, isEcho, messageId, appId,
       messageText.toLowerCase() == 'hey' ||
       messageText.toLowerCase() == 'hi') {
 
-      sendTextMessage(senderID, "Hola " + currentName + "!");
+        getUsername(senderID);
     }
     else {
       sendTextMessage(senderID, messageText);
