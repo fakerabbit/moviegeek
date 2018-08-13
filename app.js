@@ -280,6 +280,9 @@ function sendToBot(senderID, message) {
               scriptValue = scriptInfo.askNone;
               getMovieReleaseYear(senderID, parameters.Movie);
               break;
+            case 'oscar':
+              getOscarWinnerForYear(senderID, parameters.date-period ? parameters.date-period.startDate : "");
+              break;
             default:
               console.log('unknown action...');
               break;
@@ -324,6 +327,12 @@ const getMovieReleaseYear = (senderId, movieName) => {
         getMeme(senderId, "explosion");
       }
     });
+};
+
+const getOscarWinnerForYear = (senderId, date) => {
+  var d = new Date(date);
+  var options = { year: 'numeric' };
+  sendTextMessage(senderId, "El ganador del oscar el " + d.toLocaleDateString("es", options) + " fue Tom Cruise ️🏆");
 };
 
 /*
