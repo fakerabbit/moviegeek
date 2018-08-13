@@ -129,7 +129,7 @@ function getUsername(senderId) {
   }
   else if (currentUser) {
     console.log('current user not NULL');
-    scriptedDialog("INIT", senderId);
+    scriptedDialog("hola", senderId);
   }
 }
 
