@@ -281,7 +281,7 @@ function sendToBot(senderID, message) {
               getMovieReleaseYear(senderID, parameters.Movie);
               break;
             case 'oscar':
-              getOscarWinnerForYear(senderID, parameters.date-period ? parameters.date-period : "");
+              getOscarWinnerForYear(senderID, parameters.date-period ? parameters.date-period : " / ");
               break;
             default:
               console.log('unknown action...');
@@ -330,6 +330,7 @@ const getMovieReleaseYear = (senderId, movieName) => {
 };
 
 const getOscarWinnerForYear = (senderId, period) => {
+  console.log('period: ', period);
   var fields = period.split('/');
   var date = fields[0];
   var d = new Date(date);
