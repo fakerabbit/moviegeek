@@ -22,7 +22,8 @@ var scriptInfo = {
   askPlay: 6,
   askGame: 7,
   askWait: 8,
-  askDevsu: 9
+  askDevsu: 9,
+  askBot: 10,
 };
 var currentMovie = null;
 var scriptValue = scriptInfo.askNone;
@@ -191,12 +192,11 @@ const scriptedDialog = (text, senderId) => {
 
     if (!currentMovie) {
       if (scriptValue == scriptInfo.askNone) {
-        msg = "Dime " + currentUser.firstName + ", cuál es actualmente tu película favorita?";
+        msg = "Hola " + currentUser.firstName + ", cuál es actualmente tu película favorita?";
         scriptValue = scriptInfo.askMovie;
         sendTextMessage(senderId, msg);
       }
-      else {
-        scriptValue = scriptInfo.askGame;
+      else if (scriptValue == scriptInfo.askMovie) {
         if (text) {
           const url = encodeURI(text);
           request('https://api.themoviedb.org/3/search/movie?api_key=' + THEMOVIE_KEY + '&language=es&include_adult=false&query=' + url, function (error, response, body) {
@@ -228,26 +228,104 @@ const scriptedDialog = (text, senderId) => {
         }
         else sendTextMessage(senderId, msg);
       }
+      else {
+        scriptValue = scriptInfo.askBot;
+        sendToBot(senderId, msg);
+      }
     } 
     else {
       currentMovie = null;
-      if (scriptValue == scriptInfo.askGame) {
-        scriptValue = scriptInfo.askMovie;
-        if (text == "Si" || text == "si") {
+      if (scriptValue == scriptInfo.askMovie) {
+        if (text.toLowerCase() == "si") {
+          scriptValue = scriptInfo.askMovie;
           sendTextMessage(senderId, "Genial! Alguna otra película que te guste?");
           getMeme(senderId, "excited happy waiting");
-        } else {
+        } else if (text.toLowerCase() == "no") {
+          scriptValue = scriptInfo.askMovie;
           sendTextMessage(senderId, "Ni modo! Alguna otra película que te guste?");
           getMeme(senderId, "crying dissapointed angry");
+        } else {
+          scriptValue = scriptInfo.askBot;
+          sendToBot(senderId, text);
         }
       }
       else {
-        scriptValue = scriptInfo.askMovie;
-        sendTextMessage(senderId, "Hola! Dame el hombre de alguna película interesante!");
-        getMeme(senderId, "hi hello waving");
+        scriptValue = scriptInfo.askBot;
+        sendToBot(senderId, text);
       }
     }
   }
+};
+
+function sendToBot(senderID, message) {
+  sendTypingOn(senderID);
+  const request = bot.textRequest(message, {
+    sessionId: senderID,
+  });
+
+  request.on('response', function(response) {
+    if (response) {
+      console.log(response);
+      const result = response.result;
+      if (result) {
+        const fulfillment = result.fulfillment;
+        if (fulfillment && fulfillment.speech && fulfillment.speech.length > 0) {
+          sendTypingOff(senderID);
+          sendTextMessage(senderID, fulfillment.speech);
+        }
+        else {
+          sendTypingOff(senderID);
+          const action = result.action;
+          const parameters = result.parameters;
+          console.log('action: ', action);
+          console.log('parameters: ', parameters);
+          switch (action) {
+            case 'release':
+              //checkAccount(senderID, "balance")
+              getMovieReleaseYear(senderID, parameters.Movie);
+              break;
+            default:
+              console.log('unknown action...');
+              break;
+          }
+        }
+      }
+      else {
+        sendTypingOff(senderID);
+      }
+    }
+  });
+
+  request.on('error', function(error) {
+    console.log(error);
+  });
+
+  request.end();
+}
+
+const getMovieReleaseYear = (senderID, movieName) => {
+  console.log('getMovieReleaseYear: ', movieName);
+  const url = encodeURI(movieName);
+    request('https://api.themoviedb.org/3/search/movie?api_key=' + THEMOVIE_KEY + '&language=es&include_adult=false&query=' + url, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var parsed = JSON.parse(body);
+        var results = parsed.results;
+        var movie = results.length > 0 ? results[0] : null;
+        if (movie) {
+          console.log('movie: ', movie.title);
+          if (movie.release_date) {
+            sendTextMessage(senderId, movie.release_date);
+          }
+        }
+        else {
+          console.log('no movie or overview...');
+          sendTextMessage(senderId, "No conozco esa película 😅");
+          getMeme(senderId, "nervous shaking");
+        }
+      }
+      sendTextMessage(senderId, "Parece que ocurrió un error, por favor vuelve a intentarlo...");
+      getMeme(senderId, "explosion");
+    });
 };
 
 /*
