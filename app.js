@@ -189,58 +189,52 @@ function getMeme(senderID, parameter) {
 const scriptedDialog = (text, senderId) => {
   var msg = "Hola!";
   if (currentUser) {
-    if (!currentMovie) {
-      if (scriptValue == scriptInfo.askNone) {
-        msg = "Hola " + currentUser.firstName + ", cuál es actualmente tu película favorita?";
-        scriptValue = scriptInfo.askMovie;
-        sendTextMessage(senderId, msg);
-      }
-      else if (scriptValue == scriptInfo.askMovie) {
-        if (text) {
-          const url = encodeURI(text);
-          request('https://api.themoviedb.org/3/search/movie?api_key=' + THEMOVIE_KEY + '&language=es&include_adult=false&query=' + url, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-              var parsed = JSON.parse(body);
-              var results = parsed.results;
-              var movie = results.length > 0 ? results[0] : null;
-              if (movie && movie.overview) {
-                console.log('movie: ', movie.title);
-                currentMovie = movie.title;
-                if (movie.poster_path) {
-                  console.log('movie.poster_path: ', movie.poster_path);
-                  sendImageMessage(senderId, "https://image.tmdb.org/t/p/w500" + movie.poster_path);
-                }
-                if (movie.overview) {
-                  sendTextMessage(senderId, movie.overview);
-                }
-                msg = "¿Es la película que tenías en mente? (Si/No)";
-              }
-              else {
-                currentMovie = null;
-                console.log('no movie or overview...');
-                msg = "No conozco esa película. Debe ser mala 😅"
-                getMeme(senderId, "nervous smile scared");
-              }
-            }
-            sendTextMessage(senderId, msg);
-          });
-        }
-        else sendTextMessage(senderId, msg);
-      }
-      else {
-        scriptValue = scriptInfo.askBot;
-        sendToBot(senderId, text);
-      }
+    if (text.toLowerCase() == 'hola') {
+      msg = "Hola " + currentUser.firstName + ", cuál es actualmente tu película favorita?";
+      scriptValue = scriptInfo.askMovie;
+      sendTextMessage(senderId, msg);
     } 
+    else if (scriptValue == scriptInfo.askMovie) {
+      scriptValue = scriptInfo.askNone;
+      if (text) {
+        const url = encodeURI(text);
+        request('https://api.themoviedb.org/3/search/movie?api_key=' + THEMOVIE_KEY + '&language=es&include_adult=false&query=' + url, function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+            var parsed = JSON.parse(body);
+            var results = parsed.results;
+            var movie = results.length > 0 ? results[0] : null;
+            if (movie && movie.overview) {
+              console.log('movie: ', movie.title);
+              currentMovie = movie.title;
+              if (movie.poster_path) {
+                console.log('movie.poster_path: ', movie.poster_path);
+                sendImageMessage(senderId, "https://image.tmdb.org/t/p/w500" + movie.poster_path);
+              }
+              if (movie.overview) {
+                sendTextMessage(senderId, movie.overview);
+              }
+              msg = "¿Es la película que tenías en mente? (Si/No)";
+              scriptValue = scriptValue.askVerify;
+            }
+            else {
+              currentMovie = null;
+              console.log('no movie or overview...');
+              msg = "No conozco esa película. Debe ser mala 😅"
+              getMeme(senderId, "nervous smile scared");
+            }
+          }
+          sendTextMessage(senderId, msg);
+        });
+      }
+      else sendTextMessage(senderId, msg);
+    }
     else {
-      currentMovie = null;
-      if (scriptValue == scriptInfo.askMovie) {
+      if (scriptValue == scriptInfo.askVerify) {
+        scriptValue = scriptInfo.askMovie;
         if (text.toLowerCase() == "si") {
-          scriptValue = scriptInfo.askMovie;
           sendTextMessage(senderId, "Genial! Alguna otra película que te guste?");
           getMeme(senderId, "excited happy waiting");
         } else if (text.toLowerCase() == "no") {
-          scriptValue = scriptInfo.askMovie;
           sendTextMessage(senderId, "Ni modo! Alguna otra película que te guste?");
           getMeme(senderId, "crying dissapointed angry");
         } else {
