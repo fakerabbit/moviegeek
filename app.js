@@ -230,7 +230,7 @@ const scriptedDialog = (text, senderId) => {
       }
       else {
         scriptValue = scriptInfo.askBot;
-        sendToBot(senderId, msg);
+        sendToBot(senderId, text);
       }
     } 
     else {
