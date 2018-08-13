@@ -322,9 +322,11 @@ const getMovieReleaseYear = (senderId, movieName) => {
           sendTextMessage(senderId, "No conozco esa película 😅");
           getMeme(senderId, "nervous shaking");
         }
+      } else {
+        console.log('error release year: ', error);
+        sendTextMessage(senderId, "Parece que ocurrió un error, por favor vuelve a intentarlo...");
+        getMeme(senderId, "explosion");
       }
-      sendTextMessage(senderId, "Parece que ocurrió un error, por favor vuelve a intentarlo...");
-      getMeme(senderId, "explosion");
     });
 };
 
