@@ -281,7 +281,7 @@ function sendToBot(senderID, message) {
               getMovieReleaseYear(senderID, parameters.Movie);
               break;
             case 'oscar':
-              getOscarWinnerForYear(senderID, parameters.date-period ? parameters.date-period.startDate : "");
+              getOscarWinnerForYear(senderID, parameters.date-period ? parameters.date-period : "");
               break;
             default:
               console.log('unknown action...');
@@ -329,7 +329,9 @@ const getMovieReleaseYear = (senderId, movieName) => {
     });
 };
 
-const getOscarWinnerForYear = (senderId, date) => {
+const getOscarWinnerForYear = (senderId, period) => {
+  var fields = period.split('/');
+  var date = fields[0];
   var d = new Date(date);
   var options = { year: 'numeric' };
   sendTextMessage(senderId, "El ganador del oscar el " + d.toLocaleDateString("es", options) + " fue Tom Cruise ️🏆");
