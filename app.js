@@ -119,7 +119,7 @@ function getUsername(senderId) {
           score: 0
         };
 
-        scriptedDialog("INIT", senderId);
+        scriptedDialog("hola", senderId);
       }
       else {
         console.error("Failed calling GET userId API", response.statusCode, response.statusMessage, body.error);
