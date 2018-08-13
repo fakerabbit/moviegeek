@@ -303,7 +303,7 @@ function sendToBot(senderID, message) {
   request.end();
 }
 
-const getMovieReleaseYear = (senderID, movieName) => {
+const getMovieReleaseYear = (senderId, movieName) => {
   console.log('getMovieReleaseYear: ', movieName);
   const url = encodeURI(movieName);
     request('https://api.themoviedb.org/3/search/movie?api_key=' + THEMOVIE_KEY + '&language=es&include_adult=false&query=' + url, function (error, response, body) {
