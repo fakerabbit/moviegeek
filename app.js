@@ -189,7 +189,6 @@ function getMeme(senderID, parameter) {
 const scriptedDialog = (text, senderId) => {
   var msg = "Hola!";
   if (currentUser) {
-
     if (!currentMovie) {
       if (scriptValue == scriptInfo.askNone) {
         msg = "Hola " + currentUser.firstName + ", cuál es actualmente tu película favorita?";
@@ -281,7 +280,7 @@ function sendToBot(senderID, message) {
           console.log('parameters: ', parameters);
           switch (action) {
             case 'release':
-              //checkAccount(senderID, "balance")
+              scriptValue = scriptInfo.askNone;
               getMovieReleaseYear(senderID, parameters.Movie);
               break;
             default:
