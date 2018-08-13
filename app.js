@@ -283,6 +283,9 @@ function sendToBot(senderID, message) {
             case 'oscar':
               getOscarWinnerForYear(senderID, parameters["date-period"] ? parameters["date-period"] : " / ");
               break;
+            case 'recent-movie':
+              getLatestFilmFor(senderID, parameters);
+              break;
             default:
               console.log('unknown action...');
               break;
@@ -336,6 +339,20 @@ const getOscarWinnerForYear = (senderId, period) => {
   var d = new Date(date);
   var options = { year: 'numeric' };
   sendTextMessage(senderId, "El ganador del oscar el " + d.toLocaleDateString("es", options) + " fue Tom Cruise ️🏆");
+  getMeme(senderId, "Tom Cruise");
+};
+
+const getLatestFilmFor = (senderId, parameters) => {
+  console.log('getLatestFilmFor: ', parameters);
+  const givenName = parameters["given-name"] ? parameters["given-name"] : "";
+  const lastName = parameters["last-name"] ? parameters["last-name"] : "";
+  const fullName = givenName ? (lastName ? givenName + " " + lastName : givenName) : (lastName ? lastName : null);
+  if (fullName) {
+    sendTextMessage(senderId, "La más reciente película de " + fullName + " fue Misión Imposible");
+  } else {
+    sendTextMessage(senderId, "Su más reciente película fue  Misión Imposible");
+  }
+  getMeme(senderId, "Mission Impossible");
 };
 
 /*
