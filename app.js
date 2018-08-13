@@ -253,6 +253,7 @@ const scriptedDialog = (text, senderId) => {
 };
 
 function sendToBot(senderID, message) {
+  console.log('sendToBot: ', message);
   sendTypingOn(senderID);
   const request = bot.textRequest(message, {
     sessionId: senderID,
