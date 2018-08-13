@@ -230,6 +230,7 @@ const scriptedDialog = (text, senderId) => {
     }
     else {
       if (scriptValue == scriptInfo.askVerify) {
+        console.log('scriptValue == askVerify');
         scriptValue = scriptInfo.askMovie;
         if (text.toLowerCase() == "si") {
           sendTextMessage(senderId, "Genial! Alguna otra película que te guste?");
@@ -243,6 +244,7 @@ const scriptedDialog = (text, senderId) => {
         }
       }
       else {
+        console.log('scriptValue: ', scriptValue);
         scriptValue = scriptInfo.askBot;
         sendToBot(senderId, text);
       }
