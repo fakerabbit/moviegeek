@@ -338,8 +338,9 @@ const getOscarWinnerForYear = (senderId, period) => {
   var date = fields[0];
   var d = new Date(date);
   var options = { year: 'numeric' };
-  sendTextMessage(senderId, "El ganador del oscar el " + d.toLocaleDateString("es", options) + " fue Tom Cruise ️🏆");
-  getMeme(senderId, "Tom Cruise");
+  var year = d.toLocaleDateString("es", options);
+  sendTextMessage(senderId, "El ganador del oscar en " + year + " fue Tom Hanks ️🏆");
+  getMeme(senderId, "Tom Hanks");
 };
 
 const getLatestFilmFor = (senderId, parameters) => {
@@ -623,7 +624,7 @@ function setPersistentMenu() {
     thread_state: "existing_thread",
     call_to_actions: [{
       type: "postback",
-      title: "Menu Name",
+      title: "Menú",
       payload: "PAYLOAD_HELP"
     }]
   };
@@ -691,11 +692,7 @@ function receivedPostback(event) {
           payload: {
             template_type: "button",
             text: "Quick Menu",
-            buttons:[{
-              type: "postback",
-              title: "Sample Title",
-              payload: "SAMPLE_PAYLOAD"
-            },
+            buttons:[
             {
               type: "web_url",
               url: "https://devsu.com",
