@@ -9,7 +9,9 @@ const
   apiai = require('apiai'),
   request = require('request'),
   uuid = require('uuid'),
-  path = require("path");
+  path = require('path'),
+  Papa = require('papaparse'),
+  fs = require('fs');
 
 var currentUser = null;
 var scriptInfo = {
@@ -339,6 +341,16 @@ const getOscarWinnerForYear = (senderId, period) => {
   var d = new Date(date);
   var options = { year: 'numeric' };
   var year = d.toLocaleDateString("es", options);
+
+  fs.readFile('OscarData - Sheet2.csv', 'utf8', function(err, data) {  
+    if (err) console.log("unable to read oscar data: ", err);
+    Papa.parse(data, {
+      complete: function(results) {
+        console.log("Papa results: ", results);
+      }
+    });
+  });
+
   sendTextMessage(senderId, "El ganador del oscar en " + year + " fue Tom Hanks ️🏆");
   getMeme(senderId, "Tom Hanks");
 };
