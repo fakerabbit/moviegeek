@@ -347,6 +347,14 @@ const getOscarWinnerForYear = (senderId, period) => {
     Papa.parse(data, {
       complete: function(results) {
         console.log("Papa results: ", results);
+        var actor = results.find(function(array) {
+          return array[0] == year;
+        });
+        if (actor) {
+          console.log('FOUND: ', actor[3]);
+        } else {
+          console.log('NOT FOUND!');
+        }
       }
     });
   });
