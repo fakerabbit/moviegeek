@@ -346,8 +346,8 @@ const getOscarWinnerForYear = (senderId, period) => {
     if (err) console.log("unable to read oscar data: ", err);
     Papa.parse(data, {
       complete: function(results) {
-        console.log("Papa results: ", results);
-        var actor = results.find(function(array) {
+        console.log("Papa results: ", results.data);
+        var actor = results.data.find(function(array) {
           return array[0] == year;
         });
         if (actor) {
