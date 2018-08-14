@@ -343,24 +343,30 @@ const getOscarWinnerForYear = (senderId, period) => {
   var year = d.toLocaleDateString("es", options);
 
   fs.readFile('OscarData - Sheet2.csv', 'utf8', function(err, data) {  
-    if (err) console.log("unable to read oscar data: ", err);
-    Papa.parse(data, {
-      complete: function(results) {
-        console.log("Papa results: ", results.data);
-        var actor = results.data.find(function(array) {
-          return array[0] == year;
-        });
-        if (actor) {
-          console.log('FOUND: ', actor[3]);
-        } else {
-          console.log('NOT FOUND!');
+    if (err) {
+      console.log("unable to read oscar data: ", err);
+      sendTextMessage(senderId, "Lo siento, no pude encontrar la información!");
+      getMeme(senderId, "sorry");
+    } else {
+      Papa.parse(data, {
+        complete: function(results) {
+          console.log("Papa results: ", results.data);
+          var actor = results.data.find(function(array) {
+            return array[0] == year;
+          });
+          if (actor && actor[3]) {
+            console.log('FOUND: ', actor[3]);
+            sendTextMessage(senderId, "El ganador del oscar en " + year + " fue " + actor[3] + " ️🏆");
+            getMeme(senderId, actor[3]);
+          } else {
+            console.log('NOT FOUND!');
+            sendTextMessage(senderId, "Lo lamento, sólo tengo la información de los ganadores desde 1927 a 1975");
+            getMeme(senderId, "sorry");
+          }
         }
-      }
-    });
+      });
+    }
   });
-
-  sendTextMessage(senderId, "El ganador del oscar en " + year + " fue Tom Hanks ️🏆");
-  getMeme(senderId, "Tom Hanks");
 };
 
 const getLatestFilmFor = (senderId, parameters) => {
