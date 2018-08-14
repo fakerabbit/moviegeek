@@ -215,8 +215,8 @@ const scriptedDialog = (text, senderId) => {
               if (movie.overview) {
                 sendTextMessage(senderId, movie.overview);
               }
-              msg = "¿Es la película que tenías en mente? (Si/No)";
-              scriptValue = scriptInfo.askVerify;
+              msg = "¿Es la película que tenías en mente?";
+              scriptValue = scriptInfo.askBot;
             }
             else {
               currentMovie = null;
